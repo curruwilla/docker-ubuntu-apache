@@ -12,6 +12,7 @@ services:
     working_dir: "/var/www/html"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+      - "api.mastertax.local:127.0.0.1"
     ports:
       - "8080:80"
       - "8043:443"

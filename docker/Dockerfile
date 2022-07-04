@@ -10,7 +10,7 @@ ENV CONTAINER_TIMEZONE="America/Sao_Paulo"
 RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
 
 RUN apt-get update
-#RUN apt-get install sudo
+RUN apt-get install -y nano
 
 # Instalar Apache
 RUN apt-get -y install apache2
@@ -24,6 +24,7 @@ ENV APACHE_RUN_DIR /var/www/html
 RUN apt-get -y install software-properties-common
 RUN add-apt-repository ppa:ondrej/php
 
+RUN apt-get -y install libapache2-mod-php7.4
 RUN apt-get -y install php7.4-dev
 RUN apt-get -y install php7.4-cli
 RUN apt-get -y install php7.4-curl
@@ -66,6 +67,7 @@ RUN a2enmod headers
 RUN a2enmod expires
 RUN a2enmod ext_filter
 RUN a2enmod lbmethod_byrequests
+RUN a2enmod php7.4
 
 # Gerar SSL
 RUN apt-get update
@@ -84,6 +86,7 @@ COPY 99-local.ini     /etc/php/7.4/apache2/conf.d
 
 # Habilita o virtual host
 RUN a2ensite api.mastertax.local.conf
+#RUN echo "127.0.0.1 api.mastertax.local" >> /etc/hosts
 
 # Permissões
 RUN chown -R root:www-data /var/www/html
@@ -100,7 +103,7 @@ WORKDIR /var/www/html
 # RUN sudo -S chmod 2775 /var/www
 # RUN sudo -S chown .adm /var/www
 
-#RUN service apache2 restart
+RUN service apache2 restart
 
 #RUN . /etc/apache2/envvars
 
@@ -108,4 +111,4 @@ EXPOSE 80
 EXPOSE 443
 #USER ${UID}
 
-#ENTRYPOINT ["apache2ctl", "-D", "FOREGROUND"]
+ENTRYPOINT ["apache2ctl", "-D", "FOREGROUND"]
