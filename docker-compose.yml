@@ -2,25 +2,27 @@ version: '3.7'
 
 services:
   mt-api:
-    container_name: mt-api
+    container_name: "mt-api"
     build:
-      context: './docker'
-      dockerfile: Dockerfile
-    environment:
-      XDEBUG_CONFIG: "client_host=host.docker.internal client_port=9003"
-      PHP_IDE_CONFIG: "serverName=DebugAPI"
+      context: ".docker"
+      dockerfile: "Dockerfile"
+      args:
+        php_version: "7.4"
+        domain_host: "api.mastertax.local"
+        path_www: "/var/www/html"
     working_dir: "/var/www/html"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-      - "api.mastertax.local:127.0.0.1"
     ports:
       - "8080:80"
       - "8043:443"
     volumes:
-      - ./:/var/www/html
+      - "./:/var/www/html"
+      - "./.docker/000-default.conf:/etc/apache2/sites-available/000-default.conf"
+      - "./.docker/99-xdebug.ini:/etc/php/7.4/mods-available/xdebug.ini"
+      - "./.docker/99-php.ini:/etc/php/7.4/apache2/conf.d/php.ini"
+      - "./.docker/certs:/etc/apache2/ssl"
     networks:
-      - rede_local
+      - "rede_local"
 
 networks:
   rede_local:
-    driver: bridge
+    driver: "bridge"
